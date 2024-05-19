@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+#    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Heidi2022@
+      MYSQL_DATABASE: banking_app
+      MYSQL_USER: Alvine
+      MYSQL_PASSWORD: Heidi2022@
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "3307:3306"
+    networks:
+      - my_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  bank:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"  # Adjusted port mapping
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/banking_app  # Adjusted port in the URL
+      SPRING_DATASOURCE_USERNAME: Alvine
+      SPRING_DATASOURCE_PASSWORD: Heidi2022@
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+    networks:
+      - my_network
+
+networks:
+  my_network:
+
+volumes:
+  mysql_data:

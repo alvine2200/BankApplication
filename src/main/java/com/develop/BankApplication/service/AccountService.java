@@ -7,4 +7,5 @@ public interface AccountService {
 
     AccountDto createAccount(AccountDto accountDto);
 
+    AccountDto getAccount(Long id);
 }
