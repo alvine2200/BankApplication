@@ -9,8 +9,10 @@ import com.develop.BankApplication.mapper.AccountMapper;
 import com.develop.BankApplication.repository.AccountRepository;
 import com.develop.BankApplication.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -54,7 +56,21 @@ public class AccountServiceImpl implements AccountService {
             Account savedAccount = accountRepository.save(account);
             return AccountMapper.mapToAccountDto(savedAccount);
         }else {
-            throw new InsufficientFundsException(String.format("Insufficient Balance To make the withdrawal, Your Balance is : %d", account.getBalance()));
+            throw new InsufficientFundsException(
+                    String.format("Insufficient funds: attempted to withdraw %.2f but only %.2f available", depositDto.getAmount(), account.getBalance()));
         }
+    }
+
+    @Override
+    public List<AccountDto> getAllAccounts() {
+        List<Account> accounts = accountRepository.findAll();
+        return accounts.stream().map((account)->AccountMapper.mapToAccountDto(account))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAccount(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(()->new AccountNotFoundException("Account Not Found"));
+        accountRepository.deleteById(id);
     }
 }
