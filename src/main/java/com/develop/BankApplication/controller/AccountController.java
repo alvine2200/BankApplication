@@ -1,6 +1,8 @@
 package com.develop.BankApplication.controller;
 
 import com.develop.BankApplication.dto.AccountDto;
+import com.develop.BankApplication.dto.DepositDto;
+import com.develop.BankApplication.entity.Account;
 import com.develop.BankApplication.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,20 @@ public class AccountController {
     public ResponseEntity<AccountDto> getAccount(@PathVariable Long id)
     {
         AccountDto accountDto = accountService.getAccount(id);
+        return ResponseEntity.ok(accountDto);
+    }
+
+    @PostMapping("/deposit/{id}")
+    public ResponseEntity<AccountDto> depositToAccount(@PathVariable Long id, @RequestBody DepositDto depositDto)
+    {
+          AccountDto accountDto = accountService.deposit(id,depositDto);
+          return ResponseEntity.ok(accountDto);
+    }
+
+    @PostMapping("/withdraw/{id}")
+    public ResponseEntity<AccountDto> withdrawFromAccount(@PathVariable Long id, @RequestBody DepositDto depositDto)
+    {
+        AccountDto accountDto = accountService.withdraw(id,depositDto);
         return ResponseEntity.ok(accountDto);
     }
 
